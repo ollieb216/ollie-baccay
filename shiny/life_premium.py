@@ -44,6 +44,8 @@ app_ui = ui.page_sidebar(
         ui.input_slider("age", "Age:", min=18, max=75, value=30),
         ui.input_slider("weight", "Weight (lbs):", min=50, max=450, value=150, step=1),
         ui.input_select("height", "Height", height_options, selected=67),
+        ui.input_select("health", "How would you generally rate your health?",
+                        {"aboveavghealthy":"Above Average", 'avghealthy':"Average", "belowavghealthy": "Below Average"}, selected='avghealthy'),
         ui.input_select(
             "nicotine", "Nicotine/tobacco usage?",
             {"No": "No", "Cigarettes": "Regular Smoker", "Occasional": "Occasional Smoker",
