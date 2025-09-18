@@ -3,8 +3,11 @@ import numpy as np
 
 
 # Life insurance premium calculation function
-def calculate_premium(age, death_benefit, bmi, sex, nicotine, loading=0.2):
+def calculate_premium(age, death_benefit, bmi, sex, nicotine, health, loading=0.2):
     prob_death = 0.001 * (age / 30)
+
+    if sex=='Male':
+        prob_death *=1.1
 
     if 40 > bmi >= 30:
         prob_death *= 1.3  # higher risk if obese
@@ -13,8 +16,10 @@ def calculate_premium(age, death_benefit, bmi, sex, nicotine, loading=0.2):
     elif bmi >= 40:
         prob_death *= 1.7 # higher risk if majorly obese
 
-    if sex=='Male':
-        prob_death *=1.1
+    if health == 'aboveavghealthy':
+        prob_death *= 0.97
+    elif health == 'belowavghealthy':
+        prob_death *= 1.07
 
     if nicotine=='Cigarettes':
         prob_death *=2
@@ -22,6 +27,7 @@ def calculate_premium(age, death_benefit, bmi, sex, nicotine, loading=0.2):
         prob_death *=1.1
     elif nicotine=='vaping':
         prob_death *=1.3
+
 
     expected_cost = prob_death * death_benefit
     premium = expected_cost * (1 + loading)
@@ -35,8 +41,8 @@ height_options = {
     72: "6'0\"", 73: "6'1\"", 74: "6'2\"", 75: "6'3\"", 76: "6'4\"", 77: "6'5\"",
     78: "6'6\"", 79: "6'7\"", 80: "6'8\"", 81: "6'9\"", 82: "6'10\"", 83: "6'11\""
 }
-db_options = {100000:"$100,000", 250000:"$250,000", 500000:"$500,000",
-              1000000:"$1,000,000", 2000000:"$2,000,000", 5000000:"$5,000,000",10000000:"$10,000,000"}
+db_options = {250000:"$250,000", 500000:"$500,000", 1000000:"$1,000,000",
+              2000000:"$2,000,000", 5000000:"$5,000,000",10000000:"$10,000,000"}
 app_ui = ui.page_sidebar(
     ui.sidebar(
         ui.h4("Get a term life insurance quote:"),
@@ -52,11 +58,12 @@ app_ui = ui.page_sidebar(
              "vaping": "Chewing Tobacco/Vaping"}
         ),
         ui.input_select("benefit", "Death Benefit:", db_options, selected=1000000),
+        width=425
     ),
     ui.div(
         ui.h4("Here’s what term life might cost"),
         ui.output_text_verbatim("premium"),
-        style="background-color: lightgrey; min-height: 10vh; padding: 250px;"
+        style="background-color: lightgrey; min-height: 10vh; padding: 305px;"
     )
 )
 
@@ -73,7 +80,9 @@ def server(input, output, session):
 
     @reactive.Calc
     def premium_value():
-        return calculate_premium(input.age(), int(input.benefit()), bmi_value(), input.gender(), input.nicotine())
+        return calculate_premium(input.age(), int(input.benefit()),
+                                 bmi_value(), input.gender(), input.nicotine(),
+                                 input.health())
 
     @output
     @render.text
