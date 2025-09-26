@@ -51,7 +51,7 @@ app_ui = ui.page_sidebar(
         ui.input_slider("weight", "Weight (lbs):", min=50, max=450, value=150, step=1),
         ui.input_select("height", "Height", height_options, selected=67),
         ui.input_select("health", "How would you generally rate your health?",
-                        {"aboveavghealthy":"Above Average", 'avghealthy':"Average", "belowavghealthy": "Below Average"}, selected='avghealthy'),
+            {"aboveavghealthy":"Above Average", 'avghealthy':"Average", "belowavghealthy": "Below Average"}, selected='avghealthy'),
         ui.input_select(
             "nicotine", "Nicotine/tobacco usage?",
             {"No": "No", "Cigarettes": "Regular Smoker", "Occasional": "Occasional Smoker",
@@ -91,7 +91,7 @@ def server(input, output, session):
 
 
 app = App(app_ui, server)
-
+# shiny run --reload life_premium.py
 if __name__ == "__main__":
     import shiny
     shiny.run_app(app, host="127.0.0.1", port=8000)
